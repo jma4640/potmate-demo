@@ -4,29 +4,17 @@ const fs = require('node:fs');
 
 const html = fs.readFileSync('index.html', 'utf8');
 
-test('index.html exposes the yakitei kiosk mount points', () => {
+test('index.html exposes the PotMate mobile webapp mount points', () => {
   [
-    'menu-grid',
-    'selected-menu-media',
-    'selected-menu-title',
-    'selected-menu-price',
-    'recommendation-list',
-    'topping-list',
-    'drink-list',
-    'selected-quantity',
-    'current-subtotal',
-    'add-to-cart-button',
-    'cart-list',
-    'order-total',
-    'clear-cart-button',
-    'complete-order-button',
-    'completion-panel'
+    'app',
+    'toast'
   ].forEach((id) => {
     assert.match(html, new RegExp(`id="${id}"`));
   });
 
-  assert.match(html, /src="\.\/js\/kiosk-data\.js"/);
-  assert.match(html, /src="\.\/js\/kiosk-core\.js"/);
+  assert.match(html, /팟메이트\(PotMate\)/);
+  assert.match(html, /src="\.\/js\/potmate-data\.js"/);
+  assert.match(html, /src="\.\/js\/potmate-core\.js"/);
   assert.match(html, /src="\.\/js\/app\.js"/);
   assert.doesNotMatch(html, /planner\.js/);
 });

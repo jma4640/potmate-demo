@@ -1,0 +1,1517 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>팟메이트(PotMate) 데모</title>
+  <style>
+:root {
+  --color-main: #AA01E7;
+  --color-soft: #F8E7FE;
+  --color-ink: #24142B;
+  --color-muted: #7B6685;
+  --color-line: #EFD8F8;
+  --color-card: rgba(255, 255, 255, 0.88);
+  --gradient-main: linear-gradient(135deg, #AA01E7 0%, #CF4BFF 48%, #7F39FB 100%);
+  --gradient-soft: linear-gradient(145deg, #FFFFFF 0%, #F8E7FE 100%);
+  --gradient-onboarding: linear-gradient(160deg, #FFFFFF 0%, #FDF7FF 34%, #F8E7FE 68%, #F1D8FB 100%);
+  --shadow-card: 0 18px 42px rgba(91, 17, 125, 0.16);
+  --shadow-button: 0 12px 24px rgba(170, 1, 231, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  font-family: Inter, Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  color: var(--color-ink);
+  background:
+    radial-gradient(circle at 16% 0%, rgba(248, 231, 254, 0.95), transparent 32rem),
+    linear-gradient(180deg, #fff 0%, #fbf3ff 100%);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  border: 0;
+  cursor: pointer;
+}
+
+.mobile-shell {
+  position: relative;
+  width: min(100%, 440px);
+  min-height: 100vh;
+  margin: 0 auto;
+  overflow: hidden;
+  background: linear-gradient(180deg, #fff 0%, #fdf8ff 48%, #f8edff 100%);
+  box-shadow: 0 0 50px rgba(58, 19, 84, 0.12);
+}
+
+.screen {
+  min-height: 100vh;
+  padding: 22px 18px 96px;
+}
+
+.onboarding-screen {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 36px 24px;
+  color: var(--color-ink);
+  background:
+    radial-gradient(circle at 18% 14%, rgba(255, 255, 255, 0.92), transparent 9rem),
+    radial-gradient(circle at 82% 10%, rgba(222, 180, 247, 0.5), transparent 8rem),
+    radial-gradient(circle at 70% 78%, rgba(170, 1, 231, 0.12), transparent 11rem),
+    var(--gradient-onboarding);
+}
+
+.brand-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 900;
+  letter-spacing: 0;
+  color: var(--color-main);
+}
+
+.brand-icon {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border-radius: 16px;
+  color: var(--color-main);
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: inset 0 1px 0 #fff, 0 14px 30px rgba(170, 1, 231, 0.16);
+}
+
+.onboarding-hero h1 {
+  margin: 68px 0 14px;
+  font-size: 42px;
+  line-height: 1.05;
+}
+
+.onboarding-hero p {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+.floating-preview {
+  display: grid;
+  gap: 16px;
+  margin-top: 42px;
+}
+
+.preview-card {
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.92);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 18px 44px rgba(92, 24, 126, 0.12);
+  backdrop-filter: blur(16px);
+}
+
+.preview-card strong {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.preview-card span {
+  color: var(--color-muted);
+  font-size: 13px;
+}
+
+.gradient-button,
+.secondary-button,
+.ghost-button,
+.danger-button {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 18px;
+  border-radius: 18px;
+  font-weight: 800;
+}
+
+.gradient-button {
+  color: #fff;
+  background: var(--gradient-main);
+  box-shadow: var(--shadow-button);
+}
+
+.secondary-button {
+  color: var(--color-main);
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--color-line), 0 12px 26px rgba(80, 17, 110, 0.1);
+}
+
+.ghost-button {
+  min-height: 38px;
+  color: var(--color-main);
+  background: var(--color-soft);
+}
+
+.danger-button {
+  color: #B4234B;
+  background: #FFE9F0;
+}
+
+.full-button {
+  width: 100%;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.location-pill,
+.status-pill,
+.category-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.location-pill {
+  padding: 9px 12px;
+  color: var(--color-main);
+  background: var(--color-soft);
+}
+
+.status-pill {
+  padding: 7px 10px;
+  color: #6D22BC;
+  background: #F1DDFF;
+}
+
+.category-badge {
+  padding: 6px 9px;
+  color: #fff;
+  background: var(--gradient-main);
+}
+
+.hero-copy h1,
+.page-title h1 {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.18;
+}
+
+.hero-copy p,
+.page-title p {
+  margin: 8px 0 0;
+  color: var(--color-muted);
+  line-height: 1.5;
+}
+
+.search-box {
+  position: relative;
+  margin: 20px 0 14px;
+}
+
+.search-box input,
+.form-field input,
+.form-field select,
+.form-field textarea {
+  width: 100%;
+  border: 1px solid var(--color-line);
+  border-radius: 18px;
+  outline: none;
+  color: var(--color-ink);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: inset 0 1px 0 #fff, 0 10px 22px rgba(80, 17, 110, 0.08);
+}
+
+.search-box input {
+  height: 52px;
+  padding: 0 18px;
+}
+
+.category-tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 2px 0 12px;
+  scrollbar-width: none;
+}
+
+.category-tabs button {
+  flex: 0 0 auto;
+  min-height: 38px;
+  padding: 0 14px;
+  border-radius: 999px;
+  color: var(--color-muted);
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--color-line);
+}
+
+.category-tabs button.is-active {
+  color: #fff;
+  background: var(--gradient-main);
+  box-shadow: var(--shadow-button);
+}
+
+.pot-list {
+  display: grid;
+  gap: 22px;
+  max-height: calc(100vh - 258px);
+  overflow-y: auto;
+  padding: 6px 4px 26px;
+}
+
+.pot-card {
+  position: relative;
+  padding: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.88);
+  border-radius: 24px;
+  background: var(--gradient-soft);
+  box-shadow: var(--shadow-card);
+}
+
+.pot-card::before,
+.glass-card::before {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  width: 58px;
+  height: 18px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.5);
+  content: "";
+  filter: blur(1px);
+}
+
+.pot-card__head,
+.info-row,
+.settlement-row,
+.history-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.pot-card h2 {
+  margin: 16px 0 14px;
+  font-size: 19px;
+}
+
+.meta-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 11px;
+  margin: 16px 0 18px;
+}
+
+.meta-chip {
+  min-width: 0;
+  padding: 12px;
+  border-radius: 16px;
+  color: var(--color-muted);
+  background: rgba(255, 255, 255, 0.72);
+  font-size: 12px;
+}
+
+.meta-chip strong {
+  display: block;
+  margin-top: 3px;
+  color: var(--color-ink);
+  font-size: 14px;
+}
+
+.safe-pay {
+  color: var(--color-main);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.detail-stack,
+.form-stack,
+.chat-list,
+.payment-stack {
+  display: grid;
+  gap: 14px;
+}
+
+.chat-list {
+  gap: 18px;
+  margin: 18px 0;
+}
+
+.glass-card {
+  position: relative;
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.86);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: var(--shadow-card);
+}
+
+.back-button {
+  width: 42px;
+  height: 42px;
+  border-radius: 16px;
+  color: var(--color-main);
+  background: var(--color-soft);
+  font-size: 20px;
+  font-weight: 900;
+}
+
+.fixed-action {
+  position: sticky;
+  bottom: 84px;
+  margin-top: 18px;
+}
+
+.participant-strip {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.avatar {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff;
+  background: var(--gradient-main);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.join-summary {
+  text-align: center;
+}
+
+.price-xl {
+  display: block;
+  margin: 14px 0;
+  color: var(--color-main);
+  font-size: 34px;
+}
+
+.notice {
+  padding: 14px;
+  border-radius: 18px;
+  color: #6D22BC;
+  background: var(--color-soft);
+  line-height: 1.5;
+}
+
+.chat-header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  margin: -22px -18px 22px;
+  padding: 20px 18px 22px;
+  color: #fff;
+  background: var(--gradient-main);
+  box-shadow: 0 14px 26px rgba(85, 0, 134, 0.18);
+}
+
+.host-actions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 16px 0 18px;
+}
+
+.host-actions button {
+  min-height: 40px;
+  border-radius: 14px;
+  color: var(--color-main);
+  background: #fff;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.announcement {
+  padding: 16px;
+  border-radius: 18px;
+  color: #6D22BC;
+  background: #F5E6FF;
+  font-weight: 800;
+}
+
+.message {
+  max-width: 100%;
+  padding: 14px 16px;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 10px 22px rgba(80, 17, 110, 0.08);
+}
+
+.message-row {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr);
+  align-items: end;
+  gap: 10px;
+  margin: 4px 0;
+}
+
+.message-row.is-own {
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: end;
+}
+
+.message-profile {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff;
+  background: var(--gradient-main);
+  box-shadow: 0 10px 20px rgba(170, 1, 231, 0.18);
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.message-body {
+  display: grid;
+  max-width: 82%;
+  gap: 6px;
+}
+
+.message-row:not(.is-own) .message-body {
+  justify-items: start;
+}
+
+.message-row.is-own .message-body {
+  justify-items: end;
+}
+
+.message-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.host-badge {
+  padding: 3px 7px;
+  border-radius: 999px;
+  color: var(--color-main);
+  background: var(--color-soft);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.message.mine {
+  color: #fff;
+  background: var(--gradient-main);
+}
+
+.message.system {
+  justify-self: center;
+  max-width: 100%;
+  color: var(--color-main);
+  background: var(--color-soft);
+  text-align: center;
+  font-weight: 800;
+}
+
+.chat-input {
+  position: sticky;
+  bottom: 78px;
+  display: grid;
+  grid-template-columns: 1fr 74px;
+  gap: 10px;
+  margin-top: 18px;
+  padding-top: 16px;
+  background: linear-gradient(180deg, rgba(253, 248, 255, 0), #fdf8ff 35%);
+}
+
+.chat-input input {
+  min-width: 0;
+  border: 1px solid var(--color-line);
+  border-radius: 18px;
+  padding: 0 14px;
+}
+
+.form-field {
+  display: grid;
+  gap: 7px;
+}
+
+.form-field label {
+  color: var(--color-muted);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.form-field input,
+.form-field select {
+  height: 48px;
+  padding: 0 14px;
+}
+
+.form-field textarea {
+  min-height: 92px;
+  padding: 14px;
+  resize: vertical;
+}
+
+.settlement-row,
+.history-card {
+  padding: 13px;
+  border-radius: 18px;
+  background: #fff;
+}
+
+.settlement-row span,
+.history-card span {
+  color: var(--color-muted);
+  font-size: 12px;
+}
+
+.wallet-card {
+  overflow: hidden;
+  color: #fff;
+  background: var(--gradient-main);
+}
+
+.wallet-card .price-xl {
+  color: #fff;
+}
+
+.bottom-nav {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 4;
+  width: min(100%, 440px);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  padding: 10px 12px 14px;
+  border-top: 1px solid rgba(239, 216, 248, 0.9);
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 -16px 36px rgba(80, 17, 110, 0.12);
+  backdrop-filter: blur(16px);
+}
+
+.bottom-nav button {
+  min-height: 52px;
+  border-radius: 18px;
+  color: var(--color-muted);
+  background: transparent;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.bottom-nav button.is-active {
+  color: var(--color-main);
+  background: var(--color-soft);
+}
+
+.toast {
+  position: fixed;
+  right: 50%;
+  bottom: 92px;
+  z-index: 9;
+  width: min(360px, calc(100% - 36px));
+  padding: 14px 16px;
+  border-radius: 18px;
+  color: #fff;
+  background: rgba(36, 20, 43, 0.92);
+  box-shadow: 0 16px 34px rgba(36, 20, 43, 0.26);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(50%, 14px);
+  transition: 180ms ease;
+}
+
+.toast.is-visible {
+  opacity: 1;
+  transform: translate(50%, 0);
+}
+
+.empty-state {
+  padding: 28px 18px;
+  color: var(--color-muted);
+  text-align: center;
+}
+
+@media (min-width: 720px) {
+  body {
+    padding: 24px 0;
+  }
+
+  .mobile-shell {
+    min-height: calc(100vh - 48px);
+    border-radius: 34px;
+  }
+
+  .bottom-nav {
+    bottom: 24px;
+    border-radius: 0 0 34px 34px;
+  }
+}
+
+@media (max-width: 420px) {
+  .screen {
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+
+  .hero-copy h1,
+  .page-title h1 {
+    font-size: 25px;
+  }
+
+  .host-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+  </style>
+</head>
+<body>
+  <main id="app" class="mobile-shell" aria-live="polite"></main>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script>
+/* js/potmate-data.js */
+window.PotMateSeed = {
+  user: { id: 'me', name: '민아', campus: '가천대학교', role: 'student' },
+  pointBalance: 18000,
+  activeChatId: 'pot-delivery-1',
+  pots: [
+    {
+      id: 'pot-delivery-1',
+      title: '마라탕 배달 같이 시켜요',
+      category: '배달팟',
+      host: { id: 'host-1', name: '수빈', avatar: '수' },
+      currentMembers: 2,
+      maxMembers: 4,
+      perPersonAmount: 12000,
+      location: '가천대 비전타워 1층',
+      distance: 350,
+      deadline: '18분 남음',
+      description: '최소주문금액 맞춰서 마라탕이랑 꿔바로우 같이 주문해요.',
+      settlementStatus: '정산 대기',
+      safePay: true,
+      participants: [
+        { id: 'host-1', name: '수빈', avatar: '수', paid: true },
+        { id: 'mate-1', name: '지민', avatar: '지', paid: false }
+      ],
+      detail: { menu: '마라탕, 꿔바로우', pickup: '비전타워 1층 로비', orderTime: '오늘 18:40' }
+    },
+    {
+      id: 'pot-taxi-1',
+      title: '강남역 가는 택시팟',
+      category: '택시팟',
+      host: { id: 'me', name: '민아', avatar: '나', isMe: true },
+      currentMembers: 3,
+      maxMembers: 4,
+      perPersonAmount: 6500,
+      location: '가천대 정문',
+      distance: 120,
+      deadline: '오늘 21:10',
+      description: '강남역 11번 출구까지 바로 가요. 늦지 않게 정문에서 만나요.',
+      settlementStatus: '정산 대기',
+      safePay: true,
+      participants: [
+        { id: 'me', name: '민아', avatar: '나', paid: true, isMe: true },
+        { id: 'mate-2', name: '도윤', avatar: '도', paid: false },
+        { id: 'mate-3', name: '하린', avatar: '하', paid: false }
+      ],
+      detail: { start: '가천대 정문', destination: '강남역 11번 출구', departureTime: '오늘 21:20', taxiFare: '26,000원 예상' }
+    },
+    {
+      id: 'pot-sub-1',
+      title: '넷플릭스 프리미엄 4인팟',
+      category: '구독팟',
+      host: { id: 'host-3', name: '유진', avatar: '유' },
+      currentMembers: 3,
+      maxMembers: 4,
+      perPersonAmount: 4250,
+      location: '온라인 공유',
+      distance: 0,
+      deadline: '오늘 23:50',
+      description: '이번 달 넷플릭스 프리미엄 계정 같이 쓸 분 구해요.',
+      settlementStatus: '정산 요청됨',
+      safePay: true,
+      participants: [
+        { id: 'host-3', name: '유진', avatar: '유', paid: true },
+        { id: 'mate-4', name: '서연', avatar: '서', paid: true },
+        { id: 'mate-5', name: '준호', avatar: '준', paid: false }
+      ],
+      detail: { serviceName: '넷플릭스 프리미엄', period: '2026.05.01 - 2026.05.31', subscriptionAmount: '1인 4,250원' }
+    },
+    {
+      id: 'pot-etc-1',
+      title: '팀플 간식 공동구매',
+      category: '기타팟',
+      host: { id: 'host-4', name: '태희', avatar: '태' },
+      currentMembers: 5,
+      maxMembers: 8,
+      perPersonAmount: 3000,
+      location: '중앙도서관 라운지',
+      distance: 480,
+      deadline: '내일 13:00',
+      description: '팀플하면서 먹을 쿠키랑 커피를 같이 사요.',
+      settlementStatus: '정산 대기',
+      safePay: true,
+      participants: [
+        { id: 'host-4', name: '태희', avatar: '태', paid: true },
+        { id: 'mate-6', name: '민재', avatar: '민', paid: false }
+      ],
+      detail: { purpose: '팀플 간식 공동구매', place: '중앙도서관 라운지', estimatedAmount: '총 24,000원 예상' }
+    }
+  ],
+  chats: {
+    'pot-delivery-1': {
+      potId: 'pot-delivery-1',
+      messages: [
+        { from: 'host-1', name: '수빈', text: '마라맛은 2단계로 괜찮나요?', mine: false },
+        { from: 'mate-1', name: '지민', text: '좋아요. 저는 숙주 추가할게요.', mine: false }
+      ]
+    },
+    'pot-taxi-1': {
+      potId: 'pot-taxi-1',
+      messages: [
+        { from: 'me', name: '민아', text: '21시 20분에 정문 앞에서 출발할게요.', mine: true },
+        { from: 'mate-2', name: '도윤', text: '도착하면 알려주세요!', mine: false }
+      ]
+    }
+  },
+  settlements: [
+    { id: 'set-1', potId: 'pot-sub-1', title: '넷플릭스 프리미엄 4인팟', amount: 4250, status: '정산 요청됨', date: '오늘' }
+  ],
+  payments: [
+    { id: 'pay-1', potId: 'pot-sub-1', title: '넷플릭스 프리미엄 4인팟', category: '구독팟', amount: 4250, status: '정산 요청됨', date: '오늘' },
+    { id: 'pay-2', potId: 'old-1', title: '어제 치킨 배달팟', category: '배달팟', amount: 9800, status: '정산 완료', date: '어제' }
+  ]
+};
+
+
+/* js/potmate-core.js */
+(function (root, factory) {
+  if (typeof module === 'object' && module.exports) {
+    module.exports = factory();
+  } else {
+    root.PotMateCore = factory();
+  }
+})(typeof self !== 'undefined' ? self : this, function () {
+  const CATEGORY_FIELDS = {
+    '배달팟': ['menu', 'pickup', 'orderTime'],
+    '택시팟': ['start', 'destination', 'departureTime', 'taxiFare'],
+    '구독팟': ['serviceName', 'period', 'subscriptionAmount'],
+    '기타팟': ['purpose', 'place', 'estimatedAmount']
+  };
+
+  function formatWon(amount) {
+    return `${Number(amount || 0).toLocaleString('ko-KR')}원`;
+  }
+
+  function clone(value) {
+    return JSON.parse(JSON.stringify(value));
+  }
+
+  function searchTextFor(pot) {
+    return [
+      pot.title,
+      pot.category,
+      pot.location,
+      pot.description,
+      ...Object.values(pot.detail || {})
+    ].join(' ').toLowerCase();
+  }
+
+  function filterPots(pots, filters) {
+    const category = filters.category || '전체';
+    const query = (filters.query || '').trim().toLowerCase();
+
+    return pots.filter((pot) => {
+      const categoryMatches = category === '전체' || pot.category === category;
+      const queryMatches = !query || searchTextFor(pot).includes(query);
+      return categoryMatches && queryMatches;
+    });
+  }
+
+  function createPot(input, idFactory) {
+    const category = input.category || '기타팟';
+    const detail = {};
+    (CATEGORY_FIELDS[category] || CATEGORY_FIELDS['기타팟']).forEach((field) => {
+      if (input[field]) detail[field] = input[field];
+    });
+
+    return {
+      id: idFactory ? idFactory() : `pot-${Date.now()}`,
+      title: input.title || '새 팟',
+      category,
+      host: input.host || { id: 'me', name: '나', avatar: '나', isMe: true },
+      currentMembers: 1,
+      maxMembers: Number(input.maxMembers || 2),
+      perPersonAmount: Number(input.perPersonAmount || 0),
+      location: input.location || input.pickup || input.place || '캠퍼스 근처',
+      distance: Number(input.distance || 120),
+      deadline: input.deadline || '오늘 23:00',
+      description: input.description || '같이 N빵할 메이트를 찾고 있어요.',
+      settlementStatus: '정산 대기',
+      safePay: true,
+      participants: [input.host || { id: 'me', name: '나', avatar: '나', paid: false, isMe: true }],
+      detail
+    };
+  }
+
+  function canJoinPot(pot, pointBalance) {
+    if (pot.currentMembers >= pot.maxMembers) {
+      return { ok: false, reason: '모집 인원이 이미 가득 찼어요' };
+    }
+
+    if (pointBalance < pot.perPersonAmount) {
+      return { ok: false, reason: '포인트 잔액이 부족해 참여할 수 없어요' };
+    }
+
+    return { ok: true };
+  }
+
+  function ensureChat(chats, pot) {
+    const host = pot.host || { id: 'host', name: '방장' };
+    return chats[pot.id] || {
+      potId: pot.id,
+      messages: [
+        { from: host.id, name: host.name, text: '안전정산으로 진행할게요. 참여하면 여기서 얘기해요!', mine: false }
+      ]
+    };
+  }
+
+  function joinPot(state, potId) {
+    const next = clone(state);
+    const pot = next.pots.find((item) => item.id === potId);
+    if (!pot) return next;
+
+    pot.participants = pot.participants || [];
+    if (!pot.participants.some((member) => member.id === next.user.id)) {
+      pot.participants.push({ id: next.user.id, name: next.user.name, avatar: '나', paid: false, isMe: true });
+      pot.currentMembers += 1;
+    }
+
+    next.chats[potId] = ensureChat(next.chats, pot);
+    next.chats[potId].messages.push({
+      from: next.user.id,
+      name: next.user.name,
+      text: `${next.user.name}님이 팟에 입장했어요.`,
+      system: true
+    });
+
+    next.payments.push({
+      id: `pay-${Date.now()}`,
+      potId,
+      title: pot.title,
+      category: pot.category,
+      amount: pot.perPersonAmount,
+      status: '참여중',
+      date: '오늘'
+    });
+
+    return next;
+  }
+
+  function requestSettlement(state, potId, totalAmount) {
+    const next = clone(state);
+    const pot = next.pots.find((item) => item.id === potId);
+    if (!pot) return next;
+
+    const participants = pot.participants && pot.participants.length ? pot.participants : [];
+    const perPerson = Math.ceil(Number(totalAmount || 0) / Math.max(participants.length, 1));
+    pot.perPersonAmount = perPerson;
+    pot.settlementStatus = '정산 요청됨';
+    pot.participants = participants.map((member) => ({ ...member, paid: Boolean(member.paid) }));
+    next.settlements = next.settlements || [];
+    next.settlements.unshift({
+      id: `settlement-${Date.now()}`,
+      potId,
+      title: pot.title,
+      amount: perPerson,
+      status: '정산 요청됨',
+      date: '오늘'
+    });
+
+    next.chats[potId] = ensureChat(next.chats || {}, pot);
+    next.chats[potId].messages.push({
+      from: 'system',
+      text: `팟메이트 정산 요청이 도착했어요. ${formatWon(perPerson)}을 결제해주세요.`,
+      system: true
+    });
+
+    return next;
+  }
+
+  function sendReminder(name) {
+    return `${name}님에게 리마인드 알림을 보냈어요. 아직 정산하지 않은 메이트가 있어요.`;
+  }
+
+  function markParticipantPaid(state, potId, participantId, amount) {
+    const next = clone(state);
+    const pot = next.pots.find((item) => item.id === potId);
+    if (!pot) return next;
+
+    pot.participants = (pot.participants || []).map((member) => (
+      member.id === participantId ? { ...member, paid: true } : member
+    ));
+
+    if (pot.participants.length && pot.participants.every((member) => member.paid)) {
+      pot.settlementStatus = '정산 완료';
+    }
+
+    next.payments = next.payments || [];
+    next.payments.unshift({
+      id: `paid-${Date.now()}`,
+      potId,
+      title: pot.title || '팟 정산',
+      category: pot.category || '기타팟',
+      amount: Number(amount || pot.perPersonAmount || 0),
+      status: '정산 완료',
+      date: '오늘'
+    });
+
+    return next;
+  }
+
+  function chargePoints(state, amount) {
+    const next = clone(state);
+    next.pointBalance = Number(next.pointBalance || 0) + Number(amount || 0);
+    next.payments = next.payments || [];
+    next.payments.unshift({
+      id: `charge-${Date.now()}`,
+      title: '포인트 충전',
+      category: '포인트',
+      amount: Number(amount || 0),
+      status: '충전 완료',
+      date: '오늘'
+    });
+    return next;
+  }
+
+  function getPaymentHistory(state) {
+    return clone(state.payments || []);
+  }
+
+  return {
+    formatWon,
+    filterPots,
+    createPot,
+    canJoinPot,
+    joinPot,
+    requestSettlement,
+    sendReminder,
+    chargePoints,
+    markParticipantPaid,
+    getPaymentHistory
+  };
+});
+
+
+/* js/app.js */
+const core = window.PotMateCore;
+const categories = ['전체', '배달팟', '택시팟', '구독팟', '기타팟'];
+
+let state = {
+  ...JSON.parse(JSON.stringify(window.PotMateSeed)),
+  route: 'onboarding',
+  selectedCategory: '전체',
+  query: '',
+  selectedPotId: null,
+  settlementTotal: 48000
+};
+
+const app = document.querySelector('#app');
+const toast = document.querySelector('#toast');
+
+function won(amount) {
+  return core.formatWon(amount);
+}
+
+function potById(id) {
+  return state.pots.find((pot) => pot.id === id);
+}
+
+function setRoute(route, selectedPotId) {
+  state.route = route;
+  if (selectedPotId) state.selectedPotId = selectedPotId;
+  render();
+}
+
+function showToast(message) {
+  toast.textContent = message;
+  toast.classList.add('is-visible');
+  window.clearTimeout(showToast.timer);
+  showToast.timer = window.setTimeout(() => toast.classList.remove('is-visible'), 2200);
+}
+
+function nav(active) {
+  return `
+    <nav class="bottom-nav">
+      ${[
+        ['home', '홈'],
+        ['create', '팟 만들기'],
+        ['chat', '채팅'],
+        ['my', 'My 결제']
+      ].map(([route, label]) => `
+        <button type="button" class="${active === route ? 'is-active' : ''}" data-route="${route}">${label}</button>
+      `).join('')}
+    </nav>
+  `;
+}
+
+function backButton(target = 'home') {
+  return `<button class="back-button" type="button" data-route="${target}" aria-label="뒤로">‹</button>`;
+}
+
+function potCard(pot) {
+  return `
+    <article class="pot-card" data-pot-id="${pot.id}">
+      <div class="pot-card__head">
+        <span class="category-badge">${pot.category}</span>
+        <span class="safe-pay">안전정산 가능</span>
+      </div>
+      <h2>${pot.title}</h2>
+      <div class="meta-grid">
+        <div class="meta-chip">인원<strong>${pot.currentMembers}/${pot.maxMembers}명</strong></div>
+        <div class="meta-chip">예상 1인 금액<strong>${won(pot.perPersonAmount)}</strong></div>
+        <div class="meta-chip">위치<strong>${pot.location}</strong></div>
+        <div class="meta-chip">거리/마감<strong>${pot.distance}m · ${pot.deadline}</strong></div>
+      </div>
+      <button class="gradient-button full-button" type="button" data-join-id="${pot.id}">참여하기</button>
+    </article>
+  `;
+}
+
+function renderOnboarding() {
+  app.innerHTML = `
+    <section class="onboarding-screen">
+      <div>
+        <div class="brand-mark"><span class="brand-icon">P</span>팟메이트(PotMate)</div>
+        <div class="onboarding-hero">
+          <h1>같이 N빵할 사람 구해요</h1>
+          <p>근처 메이트와 배달, 택시, 구독까지 안전하게 나눠요.</p>
+        </div>
+        <div class="floating-preview">
+          <div class="preview-card"><strong>가천대학교 근처 350m</strong><span>마라탕 배달팟 · 2/4명 · 12,000원</span></div>
+          <div class="preview-card"><strong>안전정산 보관중</strong><span>정산 요청 전까지 포인트가 안전하게 관리돼요.</span></div>
+        </div>
+      </div>
+      <button class="gradient-button full-button" type="button" data-route="home">시작하기</button>
+    </section>
+  `;
+}
+
+function renderHome() {
+  const filtered = core.filterPots(state.pots, { category: state.selectedCategory, query: state.query });
+  app.innerHTML = `
+    <section class="screen">
+      <header class="topbar">
+        <span class="location-pill">현재 위치 · ${state.user.campus} 근처</span>
+        <span class="status-pill">${won(state.pointBalance)}</span>
+      </header>
+      <div class="hero-copy">
+        <h1>같이 N빵할 사람 구해요</h1>
+        <p>지금 내 주변에서 열려 있는 팟이에요</p>
+      </div>
+      <label class="search-box">
+        <input id="search-input" type="search" value="${state.query}" placeholder="마라탕, 강남역, 넷플릭스 검색">
+      </label>
+      <div class="category-tabs">
+        ${categories.map((category) => `
+          <button type="button" class="${category === state.selectedCategory ? 'is-active' : ''}" data-category="${category}">${category}</button>
+        `).join('')}
+      </div>
+      <section class="pot-list">
+        ${filtered.length ? filtered.map(potCard).join('') : '<div class="empty-state">조건에 맞는 팟이 없어요.</div>'}
+      </section>
+    </section>
+    ${nav('home')}
+  `;
+}
+
+function detailRows(pot) {
+  const labelMap = {
+    menu: '희망 메뉴',
+    pickup: '수령지',
+    orderTime: '주문 예정 시간',
+    start: '출발지',
+    destination: '도착지',
+    departureTime: '출발 시간',
+    taxiFare: '예상 택시비',
+    serviceName: '구독 서비스명',
+    period: '이용 기간',
+    subscriptionAmount: '1인당 금액',
+    purpose: '팟 목적',
+    place: '장소',
+    estimatedAmount: '예상 금액'
+  };
+
+  return Object.entries(pot.detail || {}).map(([key, value]) => `
+    <div class="info-row"><span>${labelMap[key] || key}</span><strong>${value}</strong></div>
+  `).join('');
+}
+
+function renderDetail() {
+  const pot = potById(state.selectedPotId);
+  if (!pot) return setRoute('home');
+
+  app.innerHTML = `
+    <section class="screen">
+      <header class="topbar">${backButton()}<span class="status-pill">${pot.category}</span></header>
+      <div class="detail-stack">
+        <article class="glass-card">
+          <span class="category-badge">${pot.category}</span>
+          <h1>${pot.title}</h1>
+          <p>${pot.description}</p>
+          <div class="participant-strip">
+            ${(pot.participants || []).map((member) => `<span class="avatar">${member.avatar || member.name[0]}</span>`).join('')}
+          </div>
+        </article>
+        <article class="glass-card detail-stack">
+          <div class="info-row"><span>방장</span><strong>${pot.host.name}</strong></div>
+          <div class="info-row"><span>인원</span><strong>${pot.currentMembers}/${pot.maxMembers}명</strong></div>
+          <div class="info-row"><span>예상 1인 금액</span><strong>${won(pot.perPersonAmount)}</strong></div>
+          <div class="info-row"><span>위치</span><strong>${pot.location}</strong></div>
+          <div class="info-row"><span>마감 시간</span><strong>${pot.deadline}</strong></div>
+          ${detailRows(pot)}
+        </article>
+      </div>
+      <div class="fixed-action">
+        <button class="gradient-button full-button" type="button" data-route="confirm">팟 참여하기</button>
+      </div>
+    </section>
+    ${nav('home')}
+  `;
+}
+
+function renderConfirm() {
+  const pot = potById(state.selectedPotId);
+  const result = core.canJoinPot(pot, state.pointBalance);
+
+  app.innerHTML = `
+    <section class="screen">
+      <header class="topbar">${backButton('detail')}<span class="status-pill">참여 확인</span></header>
+      <article class="glass-card join-summary">
+        <span class="category-badge">${pot.category}</span>
+        <h1>${pot.title}</h1>
+        <span class="price-xl">${won(pot.perPersonAmount)}</span>
+        <div class="info-row"><span>내 포인트 잔액</span><strong>${won(state.pointBalance)}</strong></div>
+      </article>
+      <p class="notice">정산 요청 전까지 포인트가 안전하게 보관돼요.</p>
+      ${result.ok ? `
+        <button class="gradient-button full-button" type="button" data-confirm-join="${pot.id}">참여 확정 후 채팅방 입장</button>
+      ` : `
+        <p class="notice">${result.reason}</p>
+        <button class="secondary-button full-button" type="button" data-charge="10000">충전하기</button>
+        <button class="gradient-button full-button" type="button" disabled>참여 확정 후 채팅방 입장</button>
+      `}
+    </section>
+    ${nav('home')}
+  `;
+}
+
+function memberForMessage(pot, message) {
+  if (message.from === state.user.id || message.mine) {
+    return { id: state.user.id, name: state.user.name, avatar: '나', isMe: true };
+  }
+
+  return (pot.participants || []).find((member) => member.id === message.from)
+    || (message.from === pot.host.id ? pot.host : null)
+    || { id: message.from, name: message.name || '메이트', avatar: (message.name || '메')[0] };
+}
+
+function renderMessage(pot, message) {
+  if (message.system) {
+    return `<div class="message system">${message.text}</div>`;
+  }
+
+  const isOwn = message.mine || message.from === state.user.id;
+  const member = memberForMessage(pot, message);
+  const isHostMessage = message.from === pot.host.id;
+  const avatar = member.avatar || member.name[0];
+
+  return `
+    <div class="message-row ${isOwn ? 'is-own' : ''}">
+      ${isOwn ? '' : `<div class="message-profile">${avatar}</div>`}
+      <div class="message-body">
+        ${isOwn ? '' : `
+          <div class="message-name">
+            <span>${member.name}</span>
+            ${isHostMessage ? '<span class="host-badge">방장</span>' : ''}
+          </div>
+        `}
+        <div class="message ${isOwn ? 'mine' : ''}">${message.text}</div>
+      </div>
+    </div>
+  `;
+}
+
+function renderChat() {
+  const pot = potById(state.selectedPotId || state.activeChatId) || state.pots[0];
+  state.selectedPotId = pot.id;
+  const chat = state.chats[pot.id] || { messages: [] };
+  const isHost = pot.host.id === state.user.id;
+
+  app.innerHTML = `
+    <section class="screen">
+      <header class="chat-header">
+        <div class="topbar">
+          <strong>${pot.title}</strong>
+          <span>${pot.currentMembers}/${pot.maxMembers}명</span>
+        </div>
+        <span class="status-pill">${pot.settlementStatus}</span>
+      </header>
+      ${isHost ? `
+        <div class="host-actions">
+          <button type="button" data-close-pot="${pot.id}">모집 마감하기</button>
+          <button type="button" data-route="settlement">정산 요청하기</button>
+          <button type="button" data-manage="${pot.id}">참여자 관리하기</button>
+        </div>
+      ` : ''}
+      <div class="announcement">방장 공지: 만남 장소와 정산 금액은 채팅에서 한 번 더 확인해요.</div>
+      <section class="chat-list">
+        ${chat.messages.map((message) => renderMessage(pot, message)).join('')}
+      </section>
+      <article class="glass-card">
+        <div class="info-row"><span>내 정산 상태</span><strong>${pot.settlementStatus}</strong></div>
+        <div class="info-row"><span>예상 결제 금액</span><strong>${won(pot.perPersonAmount)}</strong></div>
+      </article>
+      <div class="chat-input">
+        <input id="message-input" placeholder="메시지 입력">
+        <button class="gradient-button" type="button" data-send-message="${pot.id}">보내기</button>
+      </div>
+    </section>
+    ${nav('chat')}
+  `;
+}
+
+function renderSettlement() {
+  const pot = potById(state.selectedPotId);
+  const participants = pot.participants || [];
+  const perPerson = Math.ceil(Number(state.settlementTotal || 0) / Math.max(participants.length, 1));
+
+  app.innerHTML = `
+    <section class="screen">
+      <header class="topbar">${backButton('chat')}<span class="status-pill">정산</span></header>
+      <div class="page-title"><h1>정산 요청하기</h1><p>총 금액을 입력하면 1인당 금액이 자동 계산돼요.</p></div>
+      <div class="form-stack">
+        <label class="form-field">
+          <span>총 금액</span>
+          <input id="settlement-total" type="number" value="${state.settlementTotal}">
+        </label>
+        <article class="glass-card">
+          <div class="info-row"><span>참여자 수</span><strong>${participants.length}명</strong></div>
+          <div class="info-row"><span>1인당 금액</span><strong>${won(perPerson)}</strong></div>
+        </article>
+        <button class="gradient-button full-button" type="button" data-request-settlement="${pot.id}">정산 요청 보내기</button>
+        <div class="detail-stack">
+          ${participants.map((member) => `
+            <div class="settlement-row">
+              <div><strong>${member.name}</strong><br><span>${member.paid ? '정산 완료' : '미정산'}</span></div>
+              ${member.paid ? '<span class="status-pill">완료</span>' : `<button class="ghost-button" type="button" data-remind="${member.name}">리마인드</button>`}
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </section>
+    ${nav('chat')}
+  `;
+}
+
+function historyCard(payment) {
+  return `
+    <article class="history-card">
+      <div><strong>${payment.title}</strong><br><span>${payment.category} · ${payment.date}</span></div>
+      <div><strong>${won(payment.amount)}</strong><br><span>${payment.status}</span></div>
+    </article>
+  `;
+}
+
+function renderMy() {
+  const requested = state.payments.filter((payment) => payment.status === '정산 요청됨' || payment.status === '참여중');
+  const completed = state.payments.filter((payment) => payment.status === '정산 완료' || payment.status === '충전 완료');
+
+  app.innerHTML = `
+    <section class="screen">
+      <div class="page-title"><h1>My 결제</h1><p>포인트와 팟별 결제 상태를 한 번에 확인해요.</p></div>
+      <article class="glass-card wallet-card">
+        <span>내 포인트 잔액</span>
+        <strong class="price-xl">${won(state.pointBalance)}</strong>
+        <button class="secondary-button full-button" type="button" data-charge="10000">포인트 충전</button>
+      </article>
+      <section class="payment-stack">
+        <h2>참여 중인 팟의 결제 상태</h2>
+        ${requested.map(historyCard).join('') || '<div class="empty-state">대기 중인 결제가 없어요.</div>'}
+        <h2>정산 완료 내역</h2>
+        ${completed.map(historyCard).join('') || '<div class="empty-state">완료 내역이 없어요.</div>'}
+        <h2>최근 결제 내역</h2>
+        ${core.getPaymentHistory(state).map(historyCard).join('')}
+      </section>
+    </section>
+    ${nav('my')}
+  `;
+}
+
+function extraFields(category) {
+  const groups = {
+    '배달팟': [['menu', '메뉴'], ['orderTime', '주문 예정 시간']],
+    '택시팟': [['start', '출발지'], ['destination', '도착지'], ['departureTime', '출발 시간']],
+    '구독팟': [['serviceName', '구독 서비스명'], ['period', '이용 기간']],
+    '기타팟': [['purpose', '팟 목적'], ['place', '장소']]
+  };
+
+  return groups[category].map(([name, label]) => `
+    <label class="form-field"><span>${label}</span><input name="${name}" placeholder="${label} 입력"></label>
+  `).join('');
+}
+
+function renderCreate() {
+  const category = state.createCategory || '배달팟';
+
+  app.innerHTML = `
+    <section class="screen">
+      <div class="page-title"><h1>팟 만들기</h1><p>근처 메이트와 나눌 새 팟을 열어보세요.</p></div>
+      <form id="create-form" class="form-stack">
+        <label class="form-field"><span>카테고리</span><select name="category" id="create-category">${categories.slice(1).map((item) => `<option ${item === category ? 'selected' : ''}>${item}</option>`).join('')}</select></label>
+        <label class="form-field"><span>팟 제목</span><input name="title" required placeholder="예: 마라탕 배달 같이 시켜요"></label>
+        <label class="form-field"><span>모집 인원</span><input name="maxMembers" type="number" min="2" value="4"></label>
+        <label class="form-field"><span>예상 1인 금액</span><input name="perPersonAmount" type="number" value="8000"></label>
+        <label class="form-field"><span>위치 또는 수령지</span><input name="location" required placeholder="가천대 정문"></label>
+        <label class="form-field"><span>마감 시간</span><input name="deadline" placeholder="오늘 22:00"></label>
+        ${extraFields(category)}
+        <label class="form-field"><span>설명</span><textarea name="description" placeholder="메이트에게 보여줄 설명"></textarea></label>
+        <button class="gradient-button full-button" type="submit">팟 생성</button>
+      </form>
+    </section>
+    ${nav('create')}
+  `;
+}
+
+function render() {
+  if (state.route === 'onboarding') renderOnboarding();
+  if (state.route === 'home') renderHome();
+  if (state.route === 'detail') renderDetail();
+  if (state.route === 'confirm') renderConfirm();
+  if (state.route === 'chat') renderChat();
+  if (state.route === 'settlement') renderSettlement();
+  if (state.route === 'my') renderMy();
+  if (state.route === 'create') renderCreate();
+}
+
+app.addEventListener('click', (event) => {
+  const routeButton = event.target.closest('[data-route]');
+  const potCardButton = event.target.closest('[data-pot-id]');
+  const joinButton = event.target.closest('[data-join-id]');
+  const confirmJoin = event.target.closest('[data-confirm-join]');
+  const charge = event.target.closest('[data-charge]');
+  const requestSettlement = event.target.closest('[data-request-settlement]');
+  const remind = event.target.closest('[data-remind]');
+  const sendMessage = event.target.closest('[data-send-message]');
+  const closePot = event.target.closest('[data-close-pot]');
+  const manage = event.target.closest('[data-manage]');
+
+  if (joinButton) {
+    event.stopPropagation();
+    setRoute('confirm', joinButton.dataset.joinId);
+  } else if (potCardButton) {
+    setRoute('detail', potCardButton.dataset.potId);
+  } else if (routeButton) {
+    setRoute(routeButton.dataset.route);
+  } else if (confirmJoin) {
+    state = core.joinPot(state, confirmJoin.dataset.confirmJoin);
+    state.activeChatId = confirmJoin.dataset.confirmJoin;
+    showToast('참여가 확정됐어요. 채팅방으로 이동합니다.');
+    setRoute('chat', confirmJoin.dataset.confirmJoin);
+  } else if (charge) {
+    state = core.chargePoints(state, Number(charge.dataset.charge));
+    showToast('포인트 10,000원이 충전됐어요.');
+    render();
+  } else if (requestSettlement) {
+    state = core.requestSettlement(state, requestSettlement.dataset.requestSettlement, state.settlementTotal);
+    showToast(`팟메이트 정산 요청이 도착했어요. ${won(potById(requestSettlement.dataset.requestSettlement).perPersonAmount)}을 결제해주세요.`);
+    render();
+  } else if (remind) {
+    showToast(core.sendReminder(remind.dataset.remind));
+  } else if (sendMessage) {
+    const input = document.querySelector('#message-input');
+    const text = input.value.trim();
+    if (!text) return;
+    const potId = sendMessage.dataset.sendMessage;
+    state.chats[potId] = state.chats[potId] || { potId, messages: [] };
+    state.chats[potId].messages.push({ from: state.user.id, name: state.user.name, text, mine: true });
+    render();
+  } else if (closePot) {
+    showToast('모집을 마감했어요.');
+  } else if (manage) {
+    showToast('참여자 관리 상태를 확인했어요.');
+  }
+});
+
+app.addEventListener('input', (event) => {
+  if (event.target.id === 'search-input') {
+    state.query = event.target.value;
+    renderHome();
+  }
+
+  if (event.target.id === 'settlement-total') {
+    state.settlementTotal = Number(event.target.value || 0);
+    renderSettlement();
+  }
+});
+
+app.addEventListener('change', (event) => {
+  if (event.target.id === 'create-category') {
+    state.createCategory = event.target.value;
+    renderCreate();
+  }
+});
+
+app.addEventListener('click', (event) => {
+  const category = event.target.closest('[data-category]');
+  if (!category) return;
+  state.selectedCategory = category.dataset.category;
+  renderHome();
+});
+
+app.addEventListener('submit', (event) => {
+  if (event.target.id !== 'create-form') return;
+  event.preventDefault();
+  const formData = new FormData(event.target);
+  const input = Object.fromEntries(formData.entries());
+  const pot = core.createPot({ ...input, host: { id: state.user.id, name: state.user.name, avatar: '나', isMe: true } });
+  state.pots.unshift(pot);
+  state.activeChatId = pot.id;
+  state.chats[pot.id] = { potId: pot.id, messages: [{ from: 'system', text: '새 팟이 만들어졌어요.', system: true }] };
+  showToast('팟이 생성되어 홈 리스트에 추가됐어요.');
+  setRoute('home');
+});
+
+render();
+
+  </script>
+</body>
+</html>
